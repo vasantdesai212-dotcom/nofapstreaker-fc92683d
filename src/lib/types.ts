@@ -36,6 +36,7 @@ export interface Cycle {
 export interface GarageItem {
   id: string;
   carTemplateId: string;
+  startDate: string;
   completedDate: string;
   streakDays: number;
 }
