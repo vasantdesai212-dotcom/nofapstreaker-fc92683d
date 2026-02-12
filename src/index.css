@@ -89,7 +89,52 @@
 @keyframes part-assemble {
   0% { opacity: 0; transform: scale(0.5) translateY(20px); filter: blur(4px); }
   60% { opacity: 1; transform: scale(1.05) translateY(-2px); filter: blur(0); }
+  80% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
   100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+}
+
+@keyframes metallic-shimmer {
+  0% { left: -100%; }
+  100% { left: 200%; }
+}
+
+@keyframes particle-burst {
+  0% { opacity: 1; transform: scale(0); }
+  50% { opacity: 0.8; transform: scale(1.5); }
+  100% { opacity: 0; transform: scale(2.5); }
+}
+
+@keyframes spark {
+  0% { opacity: 1; transform: translate(0, 0) scale(1); }
+  100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0); }
+}
+
+.animate-metallic-shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  background: linear-gradient(
+    105deg,
+    transparent 30%,
+    hsl(0 0% 100% / 0.15) 45%,
+    hsl(0 0% 100% / 0.3) 50%,
+    hsl(0 0% 100% / 0.15) 55%,
+    transparent 70%
+  );
+  width: 60%;
+  animation: metallic-shimmer 1.2s 0.4s ease-out forwards;
+}
+
+.particle-burst::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  z-index: 20;
+  border-radius: inherit;
+  background: radial-gradient(circle, hsl(24 100% 50% / 0.5) 0%, transparent 70%);
+  animation: particle-burst 0.6s ease-out forwards;
+  pointer-events: none;
 }
 
 @keyframes part-break {
