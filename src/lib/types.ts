@@ -4,6 +4,7 @@ export interface CarTemplate {
   manufacturer: string;
   image: string;
   parts: CarPart[];
+  tier: number;
 }
 
 export interface CarPart {
