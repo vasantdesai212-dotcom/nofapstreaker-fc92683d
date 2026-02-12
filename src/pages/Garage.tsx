@@ -56,9 +56,15 @@ const Garage = () => {
                       <p className="text-xs text-muted-foreground uppercase tracking-widest">{car.manufacturer}</p>
                       <p className="text-lg font-bold">{car.name}</p>
                     </div>
-                    <div className="text-right">
-                      <p className="text-xs text-muted-foreground">Completed</p>
-                      <p className="text-sm font-semibold text-primary">{item.completedDate}</p>
+                    <div className="text-right space-y-1">
+                      <div>
+                        <p className="text-[10px] text-muted-foreground uppercase tracking-widest">Started</p>
+                        <p className="text-xs font-semibold text-foreground">{item.startDate || '—'}</p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] text-muted-foreground uppercase tracking-widest">Finished</p>
+                        <p className="text-xs font-semibold text-primary">{item.completedDate}</p>
+                      </div>
                     </div>
                   </div>
                 </div>

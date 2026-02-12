@@ -83,6 +83,7 @@ export const markSuccess = (state: AppState): AppState => {
     const garageItem: GarageItem = {
       id: crypto.randomUUID(),
       carTemplateId: cycle.carTemplateId,
+      startDate: cycle.startDate,
       completedDate: getToday(),
       streakDays: 30,
     };
