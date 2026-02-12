@@ -1,19 +1,28 @@
 import { useAppState } from '@/lib/AppContext';
-import { CAR_TEMPLATES } from '@/lib/cars';
-import { Settings as SettingsIcon, Car, Info } from 'lucide-react';
+import { getAvailableCars, CAR_TEMPLATES } from '@/lib/cars';
+import { Settings as SettingsIcon, Car, Info, Lock } from 'lucide-react';
 
 import porscheImg from '@/assets/porsche-911-gt3rs.jpg';
 import bmwImg from '@/assets/bmw-m5-cs.jpg';
 import lamboImg from '@/assets/lamborghini-huracan-sto.jpg';
+import mustangImg from '@/assets/ford-mustang-shelby.jpg';
+import gwagonImg from '@/assets/mercedes-g-wagon.jpg';
+import rollsImg from '@/assets/rolls-royce-wraith.jpg';
 
 const carImages: Record<string, string> = {
   'porsche-911-gt3rs': porscheImg,
   'bmw-m5-cs': bmwImg,
   'lamborghini-huracan-sto': lamboImg,
+  'ford-mustang-shelby': mustangImg,
+  'mercedes-g-wagon': gwagonImg,
+  'rolls-royce-wraith': rollsImg,
 };
 
 const Settings = () => {
   const { state, setState } = useAppState();
+  const availableCars = getAvailableCars(state.garage);
+  const availableIds = new Set(availableCars.map((c) => c.id));
+  const lockedCars = CAR_TEMPLATES.filter((c) => !availableIds.has(c.id));
 
   const selectCar = (id: string) => {
     setState({
@@ -41,8 +50,8 @@ const Settings = () => {
         <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3 flex items-center gap-2">
           <Car className="w-4 h-4" /> Next Cycle Car
         </h2>
-        <div className="space-y-3 mb-8">
-          {CAR_TEMPLATES.map((car) => {
+        <div className="space-y-3 mb-4">
+          {availableCars.map((car) => {
             const selected = state.profile.selectedCarTemplateId === car.id;
             return (
               <button
@@ -72,6 +81,36 @@ const Settings = () => {
             );
           })}
         </div>
+
+        {/* Locked cars teaser */}
+        {lockedCars.length > 0 && (
+          <>
+            <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3 mt-6 flex items-center gap-2">
+              <Lock className="w-4 h-4" /> Locked — Complete all current cars to unlock
+            </h2>
+            <div className="space-y-3 mb-8">
+              {lockedCars.map((car) => (
+                <div
+                  key={car.id}
+                  className="w-full glass-panel rounded-2xl overflow-hidden opacity-40 grayscale"
+                >
+                  <div className="flex items-center gap-4 p-3">
+                    <img
+                      src={carImages[car.id]}
+                      alt={car.name}
+                      className="w-24 h-14 object-cover rounded-lg"
+                    />
+                    <div>
+                      <p className="text-xs text-muted-foreground">{car.manufacturer}</p>
+                      <p className="font-bold">{car.name}</p>
+                    </div>
+                    <Lock className="ml-auto w-5 h-5 text-muted-foreground" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
 
         {/* Privacy note */}
         <div className="glass-panel rounded-2xl p-4 mb-6">

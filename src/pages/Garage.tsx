@@ -5,11 +5,17 @@ import { Trophy } from 'lucide-react';
 import porscheImg from '@/assets/porsche-911-gt3rs.jpg';
 import bmwImg from '@/assets/bmw-m5-cs.jpg';
 import lamboImg from '@/assets/lamborghini-huracan-sto.jpg';
+import mustangImg from '@/assets/ford-mustang-shelby.jpg';
+import gwagonImg from '@/assets/mercedes-g-wagon.jpg';
+import rollsImg from '@/assets/rolls-royce-wraith.jpg';
 
 const carImages: Record<string, string> = {
   'porsche-911-gt3rs': porscheImg,
   'bmw-m5-cs': bmwImg,
   'lamborghini-huracan-sto': lamboImg,
+  'ford-mustang-shelby': mustangImg,
+  'mercedes-g-wagon': gwagonImg,
+  'rolls-royce-wraith': rollsImg,
 };
 
 const Garage = () => {
