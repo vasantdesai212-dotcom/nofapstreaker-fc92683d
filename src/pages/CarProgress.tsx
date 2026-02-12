@@ -97,7 +97,7 @@ const CarProgress = () => {
                   }`}
                 >
                   {assembled ? (
-                    <div className="w-full h-full animate-assemble">
+                    <div className="w-full h-full animate-assemble animate-metallic-shimmer particle-burst">
                       <img
                         src={categoryImg}
                         alt={part.name}
