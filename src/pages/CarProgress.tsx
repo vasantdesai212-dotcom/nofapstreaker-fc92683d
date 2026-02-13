@@ -1,8 +1,11 @@
+import { useState } from 'react';
 import { useAppState } from '@/lib/AppContext';
 import { getActiveCycle } from '@/lib/storage';
 import { getCarTemplate, CATEGORY_LABELS } from '@/lib/cars';
+import { getPartContent } from '@/lib/partsContent';
 import type { PartCategory } from '@/lib/types';
-import { Check, Lock, Wrench } from 'lucide-react';
+import { Check, Info, Lock, Wrench } from 'lucide-react';
+import PartDetailSheet from '@/components/PartDetailSheet';
 
 import porscheImg from '@/assets/porsche-911-gt3rs.jpg';
 import bmwImg from '@/assets/bmw-m5-cs.jpg';
@@ -42,6 +45,7 @@ const partImages: Record<PartCategory, string> = {
 
 const CarProgress = () => {
   const { state } = useAppState();
+  const [selectedPartDay, setSelectedPartDay] = useState<number | null>(null);
   const cycle = getActiveCycle(state);
   const car = cycle
     ? getCarTemplate(cycle.carTemplateId)
@@ -103,7 +107,10 @@ const CarProgress = () => {
                   }`}
                 >
                   {assembled ? (
-                    <div className="w-full h-full animate-assemble animate-metallic-shimmer particle-burst">
+                    <div
+                      className="w-full h-full animate-assemble animate-metallic-shimmer particle-burst cursor-pointer"
+                      onClick={() => setSelectedPartDay(part.id)}
+                    >
                       <img
                         src={categoryImg}
                         alt={part.name}
@@ -116,7 +123,8 @@ const CarProgress = () => {
                           {part.name}
                         </p>
                       </div>
-                      <div className="absolute top-0.5 right-0.5">
+                      <div className="absolute top-0.5 right-0.5 flex gap-0.5">
+                        <Info className="w-3 h-3 text-primary/70" />
                         <Check className="w-3 h-3 text-primary" />
                       </div>
                     </div>
@@ -175,7 +183,8 @@ const CarProgress = () => {
             {assembledParts.map((part) => (
               <div
                 key={part.id}
-                className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-primary/5 border border-primary/10"
+                className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-primary/5 border border-primary/10 cursor-pointer active:scale-[0.98] transition-transform"
+                onClick={() => setSelectedPartDay(part.id)}
               >
                 <div className="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0">
                   <img src={partImages[part.category]} alt={part.name} className="w-full h-full object-cover" />
@@ -184,12 +193,21 @@ const CarProgress = () => {
                   <p className="text-sm font-semibold truncate">{part.name}</p>
                   <p className="text-[10px] text-muted-foreground uppercase tracking-widest">{CATEGORY_LABELS[part.category]}</p>
                 </div>
+                <Info className="w-4 h-4 text-primary/50 flex-shrink-0" />
                 <span className="text-xs text-muted-foreground flex-shrink-0">Day {part.id}</span>
               </div>
             ))}
           </div>
         )}
       </div>
+
+      {/* Part detail sheet */}
+      <PartDetailSheet
+        content={selectedPartDay ? getPartContent(selectedPartDay) ?? null : null}
+        category={selectedPartDay ? (car.parts.find(p => p.id === selectedPartDay)?.category ?? null) : null}
+        open={selectedPartDay !== null}
+        onOpenChange={(open) => { if (!open) setSelectedPartDay(null); }}
+      />
     </div>
   );
 };
