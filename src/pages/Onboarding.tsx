@@ -27,6 +27,7 @@ const Onboarding = () => {
       <p className="text-secondary-foreground/70 max-w-sm mb-10 text-sm leading-relaxed">
         30 days of self-control. One legendary car. No shortcuts.
       </p>
+      <p className="text-[11px] text-muted-foreground/50 mb-10">a project by — <span className="font-semibold text-muted-foreground/70">Vasant Desai</span></p>
       <button
         onClick={() => setStep(1)}
         className="flex items-center gap-2 px-8 py-4 rounded-xl bg-primary text-primary-foreground font-bold text-lg glow-orange transition-all hover:scale-105 active:scale-95"
