@@ -1,6 +1,7 @@
 import { useAppState } from '@/lib/AppContext';
-import { getAvailableCars, CAR_TEMPLATES } from '@/lib/cars';
-import { Settings as SettingsIcon, Car, Info, Lock } from 'lucide-react';
+import { getCarTemplate } from '@/lib/cars';
+import { getActiveCycle } from '@/lib/storage';
+import { Settings as SettingsIcon, Car, Info } from 'lucide-react';
 
 import porscheImg from '@/assets/porsche-911-gt3rs.jpg';
 import bmwImg from '@/assets/bmw-m5-cs.jpg';
@@ -19,17 +20,9 @@ const carImages: Record<string, string> = {
 };
 
 const Settings = () => {
-  const { state, setState } = useAppState();
-  const availableCars = getAvailableCars(state.garage);
-  const availableIds = new Set(availableCars.map((c) => c.id));
-  const lockedCars = CAR_TEMPLATES.filter((c) => !availableIds.has(c.id));
-
-  const selectCar = (id: string) => {
-    setState({
-      ...state,
-      profile: { ...state.profile, selectedCarTemplateId: id },
-    });
-  };
+  const { state } = useAppState();
+  const cycle = getActiveCycle(state);
+  const activeCar = cycle ? getCarTemplate(cycle.carTemplateId) : null;
 
   const resetAll = () => {
     if (window.confirm('This will delete ALL data including your Garage. Are you absolutely sure?')) {
@@ -46,70 +39,31 @@ const Settings = () => {
           <h1 className="text-2xl font-black">Settings</h1>
         </div>
 
-        {/* Car selection */}
+        {/* Current car (read-only) */}
         <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3 flex items-center gap-2">
-          <Car className="w-4 h-4" /> Next Cycle Car
+          <Car className="w-4 h-4" /> Current Cycle Car
         </h2>
-        <div className="space-y-3 mb-4">
-          {availableCars.map((car) => {
-            const selected = state.profile.selectedCarTemplateId === car.id;
-            return (
-              <button
-                key={car.id}
-                onClick={() => selectCar(car.id)}
-                className={`w-full glass-panel rounded-2xl overflow-hidden text-left transition-all ${
-                  selected ? 'border-primary/50 glow-orange' : 'hover:border-border'
-                }`}
-              >
-                <div className="flex items-center gap-4 p-3">
-                  <img
-                    src={carImages[car.id]}
-                    alt={car.name}
-                    className="w-24 h-14 object-cover rounded-lg"
-                  />
-                  <div>
-                    <p className="text-xs text-muted-foreground">{car.manufacturer}</p>
-                    <p className="font-bold">{car.name}</p>
-                  </div>
-                  {selected && (
-                    <span className="ml-auto text-xs text-primary font-semibold px-3 py-1 rounded-full bg-primary/10">
-                      Selected
-                    </span>
-                  )}
-                </div>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Locked cars teaser */}
-        {lockedCars.length > 0 && (
-          <>
-            <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3 mt-6 flex items-center gap-2">
-              <Lock className="w-4 h-4" /> Locked — Complete all current cars to unlock
-            </h2>
-            <div className="space-y-3 mb-8">
-              {lockedCars.map((car) => (
-                <div
-                  key={car.id}
-                  className="w-full glass-panel rounded-2xl overflow-hidden opacity-40 grayscale"
-                >
-                  <div className="flex items-center gap-4 p-3">
-                    <img
-                      src={carImages[car.id]}
-                      alt={car.name}
-                      className="w-24 h-14 object-cover rounded-lg"
-                    />
-                    <div>
-                      <p className="text-xs text-muted-foreground">{car.manufacturer}</p>
-                      <p className="font-bold">{car.name}</p>
-                    </div>
-                    <Lock className="ml-auto w-5 h-5 text-muted-foreground" />
-                  </div>
-                </div>
-              ))}
+        {activeCar ? (
+          <div className="glass-panel rounded-2xl overflow-hidden mb-8">
+            <div className="flex items-center gap-4 p-3">
+              <img
+                src={carImages[activeCar.id]}
+                alt={activeCar.name}
+                className="w-24 h-14 object-cover rounded-lg"
+              />
+              <div>
+                <p className="text-xs text-muted-foreground">{activeCar.manufacturer}</p>
+                <p className="font-bold">{activeCar.name}</p>
+              </div>
+              <span className="ml-auto text-xs text-primary font-semibold px-3 py-1 rounded-full bg-primary/10">
+                Active
+              </span>
             </div>
-          </>
+          </div>
+        ) : (
+          <div className="glass-panel rounded-2xl p-4 mb-8 text-center">
+            <p className="text-sm text-muted-foreground">No active cycle. Start one from the Home page.</p>
+          </div>
         )}
 
         {/* Privacy note */}
