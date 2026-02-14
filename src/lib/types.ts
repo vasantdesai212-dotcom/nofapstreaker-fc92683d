@@ -31,6 +31,7 @@ export interface Cycle {
   partsAssembled: boolean[];
   status: 'active' | 'completed' | 'failed';
   failedDate?: string;
+  lastSuccessAt?: string; // ISO timestamp of last success tap
 }
 
 export interface GarageItem {
