@@ -74,6 +74,7 @@ export const markSuccess = (state: AppState): AppState => {
     partsAssembled: newParts,
     dayIndex: newDayIndex,
     status: newStatus,
+    lastSuccessAt: new Date().toISOString(),
   };
 
   let newGarage = state.garage;
@@ -133,6 +134,7 @@ export const markFail = (state: AppState): AppState => {
 export const todayAlreadyLogged = (state: AppState): boolean => {
   const cycle = getActiveCycle(state);
   if (!cycle) return false;
-  // Check if current day's part is already assembled
-  return cycle.partsAssembled[cycle.dayIndex - 1] === true;
+  if (!cycle.lastSuccessAt) return false;
+  const elapsed = Date.now() - new Date(cycle.lastSuccessAt).getTime();
+  return elapsed < 24 * 60 * 60 * 1000;
 };
