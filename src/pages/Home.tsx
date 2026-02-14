@@ -1,9 +1,10 @@
 import { useAppState } from '@/lib/AppContext';
 import { getActiveCycle, startNewCycle, markSuccess, markFail, todayAlreadyLogged } from '@/lib/storage';
 import { getCarTemplate, getAvailableCars } from '@/lib/cars';
-import { Check, X, AlertTriangle, Trophy, Flame } from 'lucide-react';
+import { Check, X, AlertTriangle, Trophy, Flame, ShieldAlert, Zap } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import ColdEngineMode from '@/components/ColdEngineMode';
 
 import porscheImg from '@/assets/porsche-911-gt3rs.jpg';
 import bmwImg from '@/assets/bmw-m5-cs.jpg';
@@ -27,6 +28,8 @@ const Home = () => {
   const [showFailConfirm, setShowFailConfirm] = useState(false);
   const [justMarked, setJustMarked] = useState<'success' | 'fail' | null>(null);
   const [showCarPicker, setShowCarPicker] = useState(false);
+  const [showColdEngine, setShowColdEngine] = useState(false);
+  const [coldEngineResult, setColdEngineResult] = useState<{ survived: boolean; xp: number } | null>(null);
 
   const cycle = getActiveCycle(state);
   const hasActiveCycle = !!cycle;
@@ -239,6 +242,47 @@ const Home = () => {
       >
         View Car Assembly →
       </button>
+
+      {/* Cold Engine Trigger */}
+      <button
+        onClick={() => { setColdEngineResult(null); setShowColdEngine(true); }}
+        className="mt-4 flex items-center gap-2 px-5 py-3 rounded-xl bg-destructive/10 border border-destructive/30 text-destructive font-bold text-sm transition-all hover:bg-destructive/20 hover:scale-105 active:scale-95 glow-destructive"
+      >
+        <ShieldAlert className="w-5 h-5" />
+        I'm Feeling Urges
+      </button>
+
+      {/* Cold Engine Mode */}
+      {showColdEngine && (
+        <ColdEngineMode
+          onClose={(survived, xp) => {
+            setShowColdEngine(false);
+            setColdEngineResult({ survived, xp });
+          }}
+        />
+      )}
+
+      {/* Cold Engine Result Toast */}
+      {coldEngineResult && (
+        <div className={`fixed top-6 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-xl flex items-center gap-3 animate-count-up ${
+          coldEngineResult.survived
+            ? 'bg-success/20 border border-success/40 text-success'
+            : 'bg-muted border border-border text-muted-foreground'
+        }`}>
+          {coldEngineResult.survived ? (
+            <>
+              <Zap className="w-5 h-5" />
+              <div>
+                <p className="font-bold text-sm">Engine Stabilized</p>
+                <p className="text-xs">+{coldEngineResult.xp} XP earned</p>
+              </div>
+            </>
+          ) : (
+            <p className="font-bold text-sm">Urge logged. Stay strong.</p>
+          )}
+          <button onClick={() => setColdEngineResult(null)} className="ml-2 text-xs opacity-60">✕</button>
+        </div>
+      )}
     </div>
   );
 };
