@@ -6,6 +6,7 @@ import { getPartContent } from '@/lib/partsContent';
 import type { PartCategory } from '@/lib/types';
 import { Check, Info, Lock, Wrench } from 'lucide-react';
 import PartDetailSheet from '@/components/PartDetailSheet';
+import CarShadowProgress from '@/components/CarShadowProgress';
 
 import porscheImg from '@/assets/porsche-911-gt3rs.jpg';
 import bmwImg from '@/assets/bmw-m5-cs.jpg';
@@ -77,6 +78,14 @@ const CarProgress = () => {
             <p className="text-xs text-muted-foreground">parts assembled</p>
           </div>
         </div>
+
+        {/* Car shadow silhouette progress */}
+        <CarShadowProgress
+          selectedCarId={car.id}
+          unlockedDays={assembledCount}
+          goalDays={30}
+          carName={`${car.manufacturer} ${car.name}`}
+        />
 
         {/* Full car reveal - only shown when complete */}
         {isComplete && (
