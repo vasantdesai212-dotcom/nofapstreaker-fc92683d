@@ -28,6 +28,7 @@ const CarShadowProgress = ({
 
   // Image-based rendering (preferred when silhouette has an image)
   const hasImage = !!silhouette.image;
+  const hasMask = !!silhouette.mask;
 
   return (
     <div
@@ -38,11 +39,33 @@ const CarShadowProgress = ({
       <div className={`flex ${isMobile ? 'flex-col items-center' : 'items-center'} gap-4`}>
         {/* Silhouette with progress fill */}
         <div className={`relative ${isMobile ? 'w-full' : 'flex-1'} overflow-hidden rounded-xl`}>
-          {hasImage ? (
-            /* Image-based silhouette: colored rect behind, line-art on top with mix-blend-mode */
+          {hasMask ? (
+            /* Mask-based cutout: only the car shape is visible */
             <div className="relative w-full">
-              {/* Progress fill layer */}
-              <div className="absolute inset-0 z-0">
+              {/* Colored fill layer — masked to car shape */}
+              <div
+                className="relative w-full"
+                style={{
+                  WebkitMaskImage: `url(${silhouette.mask})`,
+                  maskImage: `url(${silhouette.mask})`,
+                  WebkitMaskSize: 'contain',
+                  maskSize: 'contain',
+                  WebkitMaskRepeat: 'no-repeat',
+                  maskRepeat: 'no-repeat',
+                  WebkitMaskPosition: 'center',
+                  maskPosition: 'center',
+                }}
+              >
+                {/* Base shadow (unfilled area) */}
+                <img
+                  src={silhouette.mask}
+                  alt=""
+                  className="w-full h-auto object-contain invisible"
+                  draggable={false}
+                />
+                {/* Absolute fill behind */}
+                <div className="absolute inset-0 bg-muted-foreground/15" />
+                {/* Progress fill */}
                 {isMobile ? (
                   <div
                     className={`absolute bottom-0 left-0 w-full ${isComplete ? 'bg-primary' : 'bg-primary/70'}`}
@@ -62,15 +85,6 @@ const CarShadowProgress = ({
                 )}
               </div>
 
-              {/* Car outline image — white bg blends away via multiply */}
-              <img
-                src={silhouette.image}
-                alt={carName}
-                className="relative z-10 w-full h-auto object-contain"
-                style={{ mixBlendMode: 'multiply' }}
-                draggable={false}
-              />
-
               {/* Glow on complete */}
               {isComplete && (
                 <div
@@ -83,7 +97,7 @@ const CarShadowProgress = ({
               )}
             </div>
           ) : (
-            /* SVG path fallback for cars without images */
+            /* SVG path fallback for cars without mask images */
             <svg
               viewBox={silhouette.viewBox}
               className="w-full h-auto"
