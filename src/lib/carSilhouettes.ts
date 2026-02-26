@@ -5,10 +5,15 @@
 import bmwSil from '@/assets/silhouettes/bmw-m5-cs.jpeg';
 import lamboSil from '@/assets/silhouettes/lamborghini-huracan-sto.jpeg';
 import porscheSil from '@/assets/silhouettes/porsche-911-gt3rs.jpeg';
+import bmwMask from '@/assets/silhouettes/bmw-m5-cs-mask.png';
+import lamboMask from '@/assets/silhouettes/lamborghini-huracan-sto-mask.png';
+import porscheMask from '@/assets/silhouettes/porsche-911-gt3rs-mask.png';
 
 export interface CarSilhouette {
-  /** If set, use this image with mix-blend-mode for the fill effect */
+  /** Line-art image for overlay detail */
   image?: string;
+  /** Solid black silhouette mask (black car on white bg) for CSS mask */
+  mask?: string;
   /** Fallback SVG path data */
   viewBox: string;
   path: string;
@@ -17,18 +22,21 @@ export interface CarSilhouette {
 const silhouettes: Record<string, CarSilhouette> = {
   'porsche-911-gt3rs': {
     image: porscheSil,
+    mask: porscheMask,
     viewBox: '0 0 900 320',
     path: `M 80,260 L 100,255 120,248 140,240 Q 155,232 170,220 L 185,200 Q 200,188 210,175 L 225,158 Q 235,145 250,135 L 280,118 Q 300,108 330,100 L 370,92 Q 400,88 430,86 L 470,85 Q 510,85 540,87 L 570,90 Q 595,93 610,98 L 635,108 Q 650,115 660,125 L 668,138 Q 672,145 674,152 L 675,160 Q 676,168 676,175 L 676,180 Q 678,172 682,160 L 690,140 Q 698,125 710,118 L 720,115 Q 728,114 735,116 L 740,120 Q 742,125 742,132 L 740,145 Q 738,155 740,165 L 745,178 Q 750,190 758,200 L 768,210 Q 778,220 785,230 L 790,240 Q 795,250 798,258 L 800,262 Q 792,268 775,270 L 755,270 Q 738,270 728,268 Q 720,250 705,238 Q 688,228 668,228 Q 648,228 632,238 Q 618,250 612,268 L 270,268 Q 264,250 248,238 Q 232,228 212,228 Q 192,228 176,238 Q 162,250 156,268 L 130,270 Q 105,270 88,268 Q 78,265 78,260 Z`,
   },
 
   'bmw-m5-cs': {
     image: bmwSil,
+    mask: bmwMask,
     viewBox: '0 0 900 320',
     path: `M 70,262 L 85,258 100,250 Q 112,242 122,232 L 135,218 Q 145,205 160,195 L 185,182 Q 205,174 230,168 L 275,160 Q 300,156 320,150 L 340,142 Q 355,136 368,128 L 385,118 Q 395,110 410,106 L 445,98 Q 475,94 510,92 L 555,90 Q 590,90 620,92 L 660,96 Q 690,100 710,108 L 725,118 Q 735,125 742,135 L 748,148 Q 752,158 755,168 L 758,180 Q 760,192 762,205 L 765,220 Q 768,235 772,245 L 778,252 Q 785,258 790,260 L 795,262 Q 788,268 775,270 L 755,272 Q 740,272 728,270 Q 720,252 705,240 Q 688,230 668,230 Q 648,230 632,240 Q 618,252 612,270 L 275,270 Q 268,252 252,240 Q 236,230 216,230 Q 196,230 180,240 Q 166,252 160,270 L 130,272 Q 100,270 82,268 Q 72,265 70,262 Z`,
   },
 
   'lamborghini-huracan-sto': {
     image: lamboSil,
+    mask: lamboMask,
     viewBox: '0 0 900 320',
     path: `M 55,258 L 70,254 88,248 Q 100,240 115,228 L 130,215 Q 140,200 155,188 L 180,172 Q 200,160 225,148 L 265,132 Q 290,122 320,112 L 365,100 Q 400,94 440,90 L 490,86 Q 530,84 570,84 L 610,86 Q 640,88 665,94 L 700,105 Q 720,112 735,122 L 750,135 Q 760,145 766,158 L 772,175 Q 776,190 778,205 L 780,218 Q 782,228 785,236 L 790,245 Q 798,252 805,256 L 810,258 Q 802,265 788,268 L 762,270 Q 745,270 735,268 Q 728,250 712,238 Q 695,228 675,228 Q 655,228 638,238 Q 622,250 616,268 L 280,268 Q 274,250 258,238 Q 242,228 222,228 Q 202,228 186,238 Q 170,250 164,268 L 135,270 Q 100,268 75,265 Q 58,262 55,258 Z`,
   },
