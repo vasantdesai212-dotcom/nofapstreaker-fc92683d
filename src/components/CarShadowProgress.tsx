@@ -24,6 +24,12 @@ const CarShadowProgress = ({
   const silhouette = getCarSilhouette(selectedCarId);
   const clipId = `clip-${selectedCarId}`;
 
+  // Parse viewBox to compute absolute fill dimensions (percentages on SVG rect are unreliable)
+  const [vbX, vbY, vbW, vbH] = silhouette.viewBox.split(' ').map(Number);
+  const fillW = (percentage / 100) * vbW;
+  const fillH = (percentage / 100) * vbH;
+  const fillY = vbH - fillH;
+
   const ariaLabel = isComplete
     ? `Car progress: Fully unlocked, ${unlockedDays} of ${goalDays} days`
     : `Car progress: ${percentage} percent unlocked, ${unlockedDays} of ${goalDays} days`;
@@ -59,10 +65,10 @@ const CarShadowProgress = ({
             <g clipPath={`url(#${clipId})`}>
               {isNarrow ? (
                 <rect
-                  x="0"
-                  y={`${100 - percentage}%`}
-                  width="100%"
-                  height={`${percentage}%`}
+                  x={vbX}
+                  y={fillY}
+                  width={vbW}
+                  height={fillH}
                   className={isComplete ? 'fill-primary' : 'fill-primary/70'}
                   style={{
                     transition: 'y 400ms ease-out, height 400ms ease-out',
@@ -70,10 +76,10 @@ const CarShadowProgress = ({
                 />
               ) : (
                 <rect
-                  x="0"
-                  y="0"
-                  width={`${percentage}%`}
-                  height="100%"
+                  x={vbX}
+                  y={vbY}
+                  width={fillW}
+                  height={vbH}
                   className={isComplete ? 'fill-primary' : 'fill-primary/70'}
                   style={{
                     transition: 'width 400ms ease-out',
