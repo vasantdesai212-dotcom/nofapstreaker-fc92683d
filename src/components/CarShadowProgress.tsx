@@ -1,7 +1,8 @@
-import { useMemo } from 'react';
+import { useMemo, useEffect, useRef } from 'react';
 import { getPercentage } from '@/lib/calcProgress';
 import { getCarSilhouette } from '@/lib/carSilhouettes';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { playEngineRev } from '@/lib/engineRevSound';
 import { Star } from 'lucide-react';
 
 interface CarShadowProgressProps {
@@ -21,6 +22,15 @@ const CarShadowProgress = ({
   const isNarrow = isMobile; // fill bottom-to-top on mobile
   const percentage = useMemo(() => getPercentage(unlockedDays, goalDays), [unlockedDays, goalDays]);
   const isComplete = percentage >= 100;
+  const prevCompleteRef = useRef(false);
+
+  // Play engine rev sound when progress first reaches 100%
+  useEffect(() => {
+    if (isComplete && !prevCompleteRef.current) {
+      playEngineRev();
+    }
+    prevCompleteRef.current = isComplete;
+  }, [isComplete]);
   const silhouette = getCarSilhouette(selectedCarId);
   const clipId = `clip-${selectedCarId}`;
 
