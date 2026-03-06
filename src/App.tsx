@@ -32,6 +32,7 @@ const AppShell = () => {
           <Route path="/garage" element={<Garage />} />
           <Route path="/insights" element={<Insights />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/game" element={<Game />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
