@@ -1,10 +1,11 @@
 import { NavLink, useLocation } from 'react-router-dom';
-import { Home, Layers, Trophy, BarChart3, Settings } from 'lucide-react';
+import { Home, Layers, Trophy, BarChart3, Settings, Gamepad2 } from 'lucide-react';
 
 const navItems = [
   { to: '/', icon: Home, label: 'Today' },
   { to: '/progress', icon: Layers, label: 'Build' },
   { to: '/garage', icon: Trophy, label: 'Garage' },
+  { to: '/game', icon: Gamepad2, label: 'Drive' },
   { to: '/insights', icon: BarChart3, label: 'Stats' },
   { to: '/settings', icon: Settings, label: 'Settings' },
 ];

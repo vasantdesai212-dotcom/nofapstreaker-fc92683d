@@ -11,6 +11,7 @@ import Garage from "./pages/Garage";
 import Insights from "./pages/Insights";
 import Settings from "./pages/Settings";
 import Onboarding from "./pages/Onboarding";
+import Game from "./pages/Game";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -31,6 +32,7 @@ const AppShell = () => {
           <Route path="/garage" element={<Garage />} />
           <Route path="/insights" element={<Insights />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/game" element={<Game />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
