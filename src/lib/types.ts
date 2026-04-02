@@ -42,6 +42,8 @@ export interface GarageItem {
   streakDays: number;
 }
 
+export type ResetMode = '24h' | 'midnight';
+
 export interface UserProfile {
   id: string;
   displayName: string;
@@ -50,6 +52,7 @@ export interface UserProfile {
   totalCompletedCars: number;
   currentCycleId: string | null;
   selectedCarTemplateId: string;
+  resetMode: ResetMode;
 }
 
 export interface AppState {

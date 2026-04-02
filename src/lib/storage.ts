@@ -136,6 +136,19 @@ export const todayAlreadyLogged = (state: AppState): boolean => {
   const cycle = getActiveCycle(state);
   if (!cycle) return false;
   if (!cycle.lastSuccessAt) return false;
+
+  const mode = state.profile.resetMode ?? '24h';
+
+  if (mode === 'midnight') {
+    const lastDate = new Date(cycle.lastSuccessAt);
+    const now = new Date();
+    return (
+      lastDate.getFullYear() === now.getFullYear() &&
+      lastDate.getMonth() === now.getMonth() &&
+      lastDate.getDate() === now.getDate()
+    );
+  }
+
   const elapsed = Date.now() - new Date(cycle.lastSuccessAt).getTime();
   return elapsed < 24 * 60 * 60 * 1000;
 };
