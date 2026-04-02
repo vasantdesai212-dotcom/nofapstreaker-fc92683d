@@ -10,6 +10,7 @@ const defaultProfile: UserProfile = {
   totalCompletedCars: 0,
   currentCycleId: null,
   selectedCarTemplateId: 'porsche-911-gt3rs',
+  resetMode: '24h',
 };
 
 const defaultState: AppState = {
