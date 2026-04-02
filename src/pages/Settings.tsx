@@ -1,7 +1,8 @@
 import { useAppState } from '@/lib/AppContext';
 import { getCarTemplate } from '@/lib/cars';
 import { getActiveCycle } from '@/lib/storage';
-import { Settings as SettingsIcon, Car, Info } from 'lucide-react';
+import { Settings as SettingsIcon, Car, Info, Clock } from 'lucide-react';
+import type { ResetMode } from '@/lib/types';
 
 import porscheImg from '@/assets/porsche-911-gt3rs.jpg';
 import bmwImg from '@/assets/bmw-m5-cs.jpg';
@@ -20,9 +21,17 @@ const carImages: Record<string, string> = {
 };
 
 const Settings = () => {
-  const { state } = useAppState();
+  const { state, setState } = useAppState();
   const cycle = getActiveCycle(state);
   const activeCar = cycle ? getCarTemplate(cycle.carTemplateId) : null;
+  const resetMode: ResetMode = state.profile.resetMode ?? '24h';
+
+  const handleResetMode = (mode: ResetMode) => {
+    setState({
+      ...state,
+      profile: { ...state.profile, resetMode: mode },
+    });
+  };
 
   const resetAll = () => {
     if (window.confirm('This will delete ALL data including your Garage. Are you absolutely sure?')) {
@@ -65,6 +74,53 @@ const Settings = () => {
             <p className="text-sm text-muted-foreground">No active cycle. Start one from the Home page.</p>
           </div>
         )}
+
+        {/* Streak reset timing */}
+        <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3 flex items-center gap-2">
+          <Clock className="w-4 h-4" /> Streak Reset Timing
+        </h2>
+        <div className="glass-panel rounded-2xl p-2 mb-8 flex flex-col gap-1">
+          <button
+            onClick={() => handleResetMode('24h')}
+            className={`flex items-center gap-3 w-full rounded-xl px-4 py-3 text-left transition-all ${
+              resetMode === '24h'
+                ? 'bg-primary/15 ring-1 ring-primary/40'
+                : 'hover:bg-muted/40'
+            }`}
+          >
+            <span
+              className={`w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
+                resetMode === '24h' ? 'border-primary' : 'border-muted-foreground/40'
+              }`}
+            >
+              {resetMode === '24h' && <span className="w-2 h-2 rounded-full bg-primary" />}
+            </span>
+            <div>
+              <p className="text-sm font-semibold">Every 24 hours</p>
+              <p className="text-xs text-muted-foreground">Refreshes exactly 24h after your last check-in</p>
+            </div>
+          </button>
+          <button
+            onClick={() => handleResetMode('midnight')}
+            className={`flex items-center gap-3 w-full rounded-xl px-4 py-3 text-left transition-all ${
+              resetMode === 'midnight'
+                ? 'bg-primary/15 ring-1 ring-primary/40'
+                : 'hover:bg-muted/40'
+            }`}
+          >
+            <span
+              className={`w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
+                resetMode === 'midnight' ? 'border-primary' : 'border-muted-foreground/40'
+              }`}
+            >
+              {resetMode === 'midnight' && <span className="w-2 h-2 rounded-full bg-primary" />}
+            </span>
+            <div>
+              <p className="text-sm font-semibold">Midnight reset</p>
+              <p className="text-xs text-muted-foreground">Refreshes every day at 12:00 AM local time</p>
+            </div>
+          </button>
+        </div>
 
         {/* Privacy note */}
         <div className="glass-panel rounded-2xl p-4 mb-6">
