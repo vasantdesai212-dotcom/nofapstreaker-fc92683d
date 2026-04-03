@@ -3,7 +3,7 @@ import { Home, Layers, Trophy, BarChart3, Settings, Gamepad2 } from 'lucide-reac
 
 const navItems = [
   { to: '/', icon: Home, label: 'Today' },
-  { to: '/progress', icon: Layers, label: 'Build' },
+  { to: '/progress', icon: Layers, label: 'Builds' },
   { to: '/garage', icon: Trophy, label: 'Garage' },
   { to: '/game', icon: Gamepad2, label: 'Drive' },
   { to: '/insights', icon: BarChart3, label: 'Stats' },
