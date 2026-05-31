@@ -21,7 +21,7 @@ nofapstreaker is an open-source app built to help users track their streaks, sta
 
 | Home | Streak View | Analytics |
 |------|------------|-----------|
-| `C:\Users\DELL\OneDrive\Documents\nofap\Screenshot 2026-05-31 142008.png` | `C:\Users\DELL\OneDrive\Documents\nofap\Screenshot 2026-05-31 142046.png` | `C:\Users\DELL\OneDrive\Documents\nofap\Screenshot 2026-05-31 142101.png` |
+| `![Home Screen](./ss/Screenshot 2026-05-31 142008.png)` | `![Progress Screen](./ss/Screenshot 2026-05-31 142046.png)` | `![Stats Screen](./ss/Screenshot 2026-05-31 142101.png)` |
 
 ---
 
@@ -32,18 +32,6 @@ nofapstreaker is an open-source app built to help users track their streaks, sta
 - **Simple UI** — no bloated distractions
 - **Open source** — fully transparent and editable
 - **Built for consistency** — designed around daily habit reinforcement
-
----
-
-## 🛠️ Tech Stack
-
-> Replace this section with your actual stack if needed.
-
-- **Frontend:** [Your frontend tech]
-- **Backend:** [Your backend tech]
-- **Database:** [Your database]
-- **Authentication:** [If applicable]
-- **Deployment:** [If applicable]
 
 ---
 
