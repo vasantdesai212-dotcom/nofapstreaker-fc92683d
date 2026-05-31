@@ -21,7 +21,7 @@ nofapstreaker is an open-source app built to help users track their streaks, sta
 
 | Home | Streak View | Analytics |
 |------|------------|-----------|
-| `./assets/home.png` | `./assets/streak.png` | `./assets/analytics.png` |
+| `C:\Users\DELL\OneDrive\Documents\nofap\Screenshot 2026-05-31 142008.png` | `C:\Users\DELL\OneDrive\Documents\nofap\Screenshot 2026-05-31 142046.png` | `C:\Users\DELL\OneDrive\Documents\nofap\Screenshot 2026-05-31 142101.png` |
 
 ---
 
