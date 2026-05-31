@@ -17,10 +17,26 @@ nofapstreaker is an open-source app built to help users track their streaks, sta
 
 ## 📸 Preview
 
-<img src="./ss/home.png" width="250"/>
-<img src="./ss/progress.png" width="250"/>
-<img src="./ss/stats.png" width="250"/>
+## 📸 Preview
 
+<table>
+  <tr>
+    <th>Home</th>
+    <th>Daily Progress</th>
+    <th>Stats</th>
+  </tr>
+  <tr>
+    <td>
+      <img src="./ss/home.png" width="250"/>
+    </td>
+    <td>
+      <img src="./ss/progress.png" width="250"/>
+    </td>
+    <td>
+      <img src="./ss/stats.png" width="250"/>
+    </td>
+  </tr>
+</table>
 ---
 
 ## 🚀 Features
