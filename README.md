@@ -17,8 +17,6 @@ nofapstreaker is an open-source app built to help users track their streaks, sta
 
 ## 📸 Preview
 
-## 📸 Preview
-
 <table>
   <tr>
     <th>Home</th>
@@ -37,6 +35,7 @@ nofapstreaker is an open-source app built to help users track their streaks, sta
     </td>
   </tr>
 </table>
+
 ---
 
 ## 🚀 Features
