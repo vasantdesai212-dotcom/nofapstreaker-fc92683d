@@ -47,6 +47,15 @@ nofapstreaker is an open-source app built to help users track their streaks, sta
 - **Built for consistency** — designed around daily habit reinforcement
 
 ---
+## 📲 Download APK
+
+<p align="center">
+  <a href="(https://github.com/vasantdesai212-dotcom/nofapstreaker-fc92683d/releases/download/v1.0.0/nofapstreaker.apk)">
+    <img src="https://img.shields.io/badge/Download-APK-orange?style=for-the-badge">
+  </a>
+</p>
+
+---
 
 ## 📦 Installation
 
@@ -55,3 +64,4 @@ git clone https://github.com/<your-username>/nofapstreaker.git
 cd nofapstreaker
 npm install
 npm run dev
+
