@@ -617,6 +617,17 @@ const RoadRunnerGame = ({ onExit, streakDays = 0 }: RoadRunnerGameProps) => {
         ctx.restore();
       }
 
+      // Cinematic vignette overlay (drawn last, on every phase)
+      const vg = ctx.createRadialGradient(
+        width / 2, height / 2, Math.min(width, height) * 0.35,
+        width / 2, height / 2, Math.max(width, height) * 0.75,
+      );
+      vg.addColorStop(0, 'rgba(0,0,0,0)');
+      vg.addColorStop(0.7, 'rgba(0,0,0,0.25)');
+      vg.addColorStop(1, 'rgba(0,0,0,0.6)');
+      ctx.fillStyle = vg;
+      ctx.fillRect(0, 0, width, height);
+
       rafRef.current = requestAnimationFrame(loop);
     };
     rafRef.current = requestAnimationFrame(loop);
