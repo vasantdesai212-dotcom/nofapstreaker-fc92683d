@@ -93,6 +93,8 @@ const RoadRunnerGame = ({ onExit, streakDays = 0 }: RoadRunnerGameProps) => {
   const wheelSpinRef = useRef(0);
   const shakeRef = useRef(0);
   const invulnRef = useRef(0);
+  const prevSpeedRef = useRef(0);
+  const shadowStretchRef = useRef(1); // 1 = neutral, >1 = stretched forward (braking), <1 = compressed
   const audioCtxRef = useRef<AudioContext | null>(null);
   const engineNodesRef = useRef<{ osc: OscillatorNode; gain: GainNode } | null>(null);
 
