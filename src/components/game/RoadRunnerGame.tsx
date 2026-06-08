@@ -695,12 +695,17 @@ const RoadRunnerGame = ({ onExit, streakDays = 0 }: RoadRunnerGameProps) => {
             <h1 className="text-5xl font-black tracking-tight" style={{ fontFamily: 'Orbitron, ui-monospace, monospace' }}>
               Freedom Drive
             </h1>
+            {streakDays > 0 && (
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/20 border border-primary/40 text-primary text-sm font-bold">
+                🔥 {streakDays}-Day Streak Unlocked This. Let's Ride.
+              </div>
+            )}
             <p className="text-white/70 text-sm">
               Steer with <span className="text-white font-bold">←/→</span> or <span className="text-white font-bold">A/D</span>. Avoid traffic. Go as far as you can.
             </p>
             <button
               onClick={startGame}
-              className="px-8 py-3 rounded-full bg-white text-black font-black text-lg shadow-2xl hover:scale-105 transition-transform"
+              className="px-8 py-3 rounded-full bg-primary text-primary-foreground font-black text-lg shadow-2xl hover:scale-105 transition-transform"
             >
               Tap to Start
             </button>
@@ -713,20 +718,32 @@ const RoadRunnerGame = ({ onExit, streakDays = 0 }: RoadRunnerGameProps) => {
 
       {/* Game Over */}
       {phase === 'gameover' && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/70 backdrop-blur text-white p-6">
-          <div className="text-center space-y-5 max-w-sm">
-            <div className="text-5xl">💥</div>
-            <h2 className="text-3xl font-black">Game Over</h2>
-            <p className="text-white/70">You drove</p>
-            <div className="text-5xl font-black font-mono" style={{ fontFamily: 'Orbitron, ui-monospace, monospace' }}>
-              {hud.distance.toFixed(2)} <span className="text-xl text-white/60">km</span>
+        <div className="absolute inset-0 flex items-center justify-center bg-black/75 backdrop-blur text-white p-6">
+          <div className="text-center space-y-6 max-w-sm w-full">
+            <div className="text-6xl">💥</div>
+            <h2 className="text-2xl font-black tracking-wide uppercase text-white/80">Game Over</h2>
+            <div className="space-y-1">
+              <p className="text-xs uppercase tracking-widest text-white/50">Final Distance</p>
+              <div className="text-7xl font-black font-mono leading-none" style={{ fontFamily: 'Orbitron, ui-monospace, monospace' }}>
+                {hud.distance.toFixed(2)}
+              </div>
+              <p className="text-sm text-white/60 font-bold tracking-wider">KILOMETERS</p>
             </div>
-            <div className="flex gap-3 justify-center">
-              <button onClick={startGame} className="px-6 py-3 rounded-full bg-white text-black font-bold">
+            <p className="text-base text-white/90 font-medium italic">
+              Keep your streak, keep your speed! 🏁
+            </p>
+            <div className="flex flex-col gap-2 pt-2">
+              <button
+                onClick={startGame}
+                className="w-full px-6 py-3 rounded-xl bg-primary text-primary-foreground font-bold text-base shadow-lg hover:opacity-90 transition-opacity"
+              >
                 Play Again
               </button>
-              <button onClick={onExit} className="px-6 py-3 rounded-full bg-white/10 border border-white/20 text-white font-bold">
-                Exit
+              <button
+                onClick={onExit}
+                className="w-full px-6 py-3 rounded-xl bg-white/5 border border-white/15 text-white/80 font-medium hover:bg-white/10 transition-colors"
+              >
+                Exit to Garage
               </button>
             </div>
           </div>
