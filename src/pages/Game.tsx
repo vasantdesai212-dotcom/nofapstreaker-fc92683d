@@ -1,45 +1,39 @@
 import { lazy, Suspense, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAppState } from '@/lib/AppContext';
 import { getActiveCycle } from '@/lib/storage';
 import GameLocked from '@/components/game/GameLocked';
 
-// Lazy-load the heavy 3D scene only when entitled
-const GameScene = lazy(() => import('@/components/game/GameScene'));
+const RoadRunnerGame = lazy(() => import('@/components/game/RoadRunnerGame'));
 
-const PORSCHE_ID = 'porsche-911-gt3rs';
+const UNLOCK_DAYS = 15;
 
 const Game = () => {
   const { state } = useAppState();
+  const navigate = useNavigate();
 
-  // Entitlement check: user must have completed a 30-day streak with the Porsche
-  const { isUnlocked, streakDays, hasPorsche } = useMemo(() => {
-    const hasPorsche = state.garage.some((g) => g.carTemplateId === PORSCHE_ID);
+  const { isUnlocked, streakDays } = useMemo(() => {
     const activeCycle = getActiveCycle(state);
     const currentStreak = activeCycle ? activeCycle.dayIndex - 1 : 0;
     const bestStreak = state.profile.bestStreak;
-    const streakDays = Math.max(currentStreak, bestStreak);
-
-    return {
-      isUnlocked: hasPorsche,
-      streakDays,
-      hasPorsche,
-    };
+    const days = Math.max(currentStreak, bestStreak);
+    return { isUnlocked: days >= UNLOCK_DAYS, streakDays: days };
   }, [state]);
 
   if (!isUnlocked) {
-    return <GameLocked streakDays={streakDays} hasPorsche={hasPorsche} />;
+    return <GameLocked streakDays={streakDays} requiredDays={UNLOCK_DAYS} />;
   }
 
   return (
     <Suspense
       fallback={
         <div className="min-h-screen flex flex-col items-center justify-center bg-background gap-4">
-          <div className="w-10 h-10 border-3 border-primary border-t-transparent rounded-full animate-spin" />
-          <p className="text-sm text-muted-foreground font-medium">Loading Porsche 911 GT3 RS...</p>
+          <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+          <p className="text-sm text-muted-foreground font-medium">Loading Freedom Drive...</p>
         </div>
       }
     >
-      <GameScene />
+      <RoadRunnerGame onExit={() => navigate('/garage')} />
     </Suspense>
   );
 };
