@@ -71,9 +71,10 @@ const COLORS = {
 
 interface RoadRunnerGameProps {
   onExit: () => void;
+  streakDays?: number;
 }
 
-const RoadRunnerGame = ({ onExit }: RoadRunnerGameProps) => {
+const RoadRunnerGame = ({ onExit, streakDays = 0 }: RoadRunnerGameProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rafRef = useRef<number>();
   const lastTimeRef = useRef<number>(0);
@@ -92,6 +93,8 @@ const RoadRunnerGame = ({ onExit }: RoadRunnerGameProps) => {
   const wheelSpinRef = useRef(0);
   const shakeRef = useRef(0);
   const invulnRef = useRef(0);
+  const prevSpeedRef = useRef(0);
+  const shadowStretchRef = useRef(1); // 1 = neutral, >1 = stretched forward (braking), <1 = compressed
   const audioCtxRef = useRef<AudioContext | null>(null);
   const engineNodesRef = useRef<{ osc: OscillatorNode; gain: GainNode } | null>(null);
 
@@ -317,9 +320,12 @@ const RoadRunnerGame = ({ onExit }: RoadRunnerGameProps) => {
     const drawSky = (width: number, height: number) => {
       const horizon = height * 0.55;
       const grad = ctx.createLinearGradient(0, 0, 0, horizon);
-      grad.addColorStop(0, '#0b1d3a');
-      grad.addColorStop(0.5, '#5a4480');
-      grad.addColorStop(1, '#ffb37a');
+      // Smooth navy → indigo → warm peach/amber
+      grad.addColorStop(0, '#06122b');
+      grad.addColorStop(0.25, '#1a2a55');
+      grad.addColorStop(0.55, '#6b4a7a');
+      grad.addColorStop(0.8, '#e89466');
+      grad.addColorStop(1, '#ffc28a');
       ctx.fillStyle = grad;
       ctx.fillRect(0, 0, width, horizon);
       // Sun
@@ -546,11 +552,16 @@ const RoadRunnerGame = ({ onExit }: RoadRunnerGameProps) => {
           if (seg.p1.screenScale <= 0) continue;
           // Deterministic per-segment props
           const r = ((seg.index * 9301 + 49297) % 233280) / 233280;
+          // Pick one of 3 tree variants with size jitter
+          const variant: 'pine' | 'leafy' | 'bush' = r < 0.18 ? 'pine' : r < 0.6 ? 'leafy' : 'bush';
+          const variant2: 'pine' | 'leafy' | 'bush' = r > 0.85 ? 'pine' : r > 0.55 ? 'leafy' : 'bush';
+          const jitter1 = 0.75 + ((seg.index * 73) % 100) / 200; // 0.75..1.25
+          const jitter2 = 0.75 + ((seg.index * 131) % 100) / 200;
           if (r < 0.35) {
-            drawTree(ctx, seg.p1.screenX - seg.p1.screenW - 30 - seg.p1.screenScale * 1500 * (r * 3), seg.p1.screenY, seg.p1.screenScale, r < 0.18 ? 'pine' : 'leafy');
+            drawTree(ctx, seg.p1.screenX - seg.p1.screenW - 30 - seg.p1.screenScale * 1500 * (r * 3), seg.p1.screenY, seg.p1.screenScale * jitter1, variant);
           }
           if (r > 0.6) {
-            drawTree(ctx, seg.p1.screenX + seg.p1.screenW + 30 + seg.p1.screenScale * 1500 * ((1 - r) * 3), seg.p1.screenY, seg.p1.screenScale, r > 0.85 ? 'pine' : 'leafy');
+            drawTree(ctx, seg.p1.screenX + seg.p1.screenW + 30 + seg.p1.screenScale * 1500 * ((1 - r) * 3), seg.p1.screenY, seg.p1.screenScale * jitter2, variant2);
           }
           // Occasional billboards / signs
           if (seg.index % 80 === 0) {
@@ -568,10 +579,25 @@ const RoadRunnerGame = ({ onExit }: RoadRunnerGameProps) => {
         const carCy = height * 0.82;
         const carW = Math.min(width * 0.28, 260);
         const carH = carW * 0.62;
-        // Shadow
-        ctx.fillStyle = 'rgba(0,0,0,0.35)';
+        // Shadow — stretches forward when braking, compresses when slow/stopped
+        const sp = speedRef.current;
+        const dSpeed = sp - prevSpeedRef.current;
+        prevSpeedRef.current = sp;
+        // Target: 1 (neutral), >1 when decelerating, <1 when nearly stopped
+        const speedFactor = Math.max(0.4, Math.min(1, sp / (MAX_SPEED * 0.6)));
+        const brakeBoost = dSpeed < 0 ? Math.min(0.8, (-dSpeed / (ACCEL * 0.02))) : 0;
+        const targetStretch = speedFactor + brakeBoost;
+        shadowStretchRef.current += (targetStretch - shadowStretchRef.current) * Math.min(1, dt * 6);
+        const stretch = shadowStretchRef.current;
+        ctx.fillStyle = `rgba(0,0,0,${0.3 + (1 - speedFactor) * 0.15})`;
         ctx.beginPath();
-        ctx.ellipse(carCx, carCy + carH * 0.45, carW * 0.45, carH * 0.12, 0, 0, Math.PI * 2);
+        ctx.ellipse(
+          carCx,
+          carCy + carH * 0.45,
+          carW * 0.45 * stretch,
+          carH * 0.12 * (0.7 + (1 - speedFactor) * 0.6),
+          0, 0, Math.PI * 2,
+        );
         ctx.fill();
         // Speed lines
         if (speedRef.current > MAX_SPEED * 0.4) {
@@ -590,6 +616,17 @@ const RoadRunnerGame = ({ onExit }: RoadRunnerGameProps) => {
 
         ctx.restore();
       }
+
+      // Cinematic vignette overlay (drawn last, on every phase)
+      const vg = ctx.createRadialGradient(
+        width / 2, height / 2, Math.min(width, height) * 0.35,
+        width / 2, height / 2, Math.max(width, height) * 0.75,
+      );
+      vg.addColorStop(0, 'rgba(0,0,0,0)');
+      vg.addColorStop(0.7, 'rgba(0,0,0,0.25)');
+      vg.addColorStop(1, 'rgba(0,0,0,0.6)');
+      ctx.fillStyle = vg;
+      ctx.fillRect(0, 0, width, height);
 
       rafRef.current = requestAnimationFrame(loop);
     };
@@ -658,12 +695,17 @@ const RoadRunnerGame = ({ onExit }: RoadRunnerGameProps) => {
             <h1 className="text-5xl font-black tracking-tight" style={{ fontFamily: 'Orbitron, ui-monospace, monospace' }}>
               Freedom Drive
             </h1>
+            {streakDays > 0 && (
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/20 border border-primary/40 text-primary text-sm font-bold">
+                🔥 {streakDays}-Day Streak Unlocked This. Let's Ride.
+              </div>
+            )}
             <p className="text-white/70 text-sm">
               Steer with <span className="text-white font-bold">←/→</span> or <span className="text-white font-bold">A/D</span>. Avoid traffic. Go as far as you can.
             </p>
             <button
               onClick={startGame}
-              className="px-8 py-3 rounded-full bg-white text-black font-black text-lg shadow-2xl hover:scale-105 transition-transform"
+              className="px-8 py-3 rounded-full bg-primary text-primary-foreground font-black text-lg shadow-2xl hover:scale-105 transition-transform"
             >
               Tap to Start
             </button>
@@ -676,20 +718,32 @@ const RoadRunnerGame = ({ onExit }: RoadRunnerGameProps) => {
 
       {/* Game Over */}
       {phase === 'gameover' && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/70 backdrop-blur text-white p-6">
-          <div className="text-center space-y-5 max-w-sm">
-            <div className="text-5xl">💥</div>
-            <h2 className="text-3xl font-black">Game Over</h2>
-            <p className="text-white/70">You drove</p>
-            <div className="text-5xl font-black font-mono" style={{ fontFamily: 'Orbitron, ui-monospace, monospace' }}>
-              {hud.distance.toFixed(2)} <span className="text-xl text-white/60">km</span>
+        <div className="absolute inset-0 flex items-center justify-center bg-black/75 backdrop-blur text-white p-6">
+          <div className="text-center space-y-6 max-w-sm w-full">
+            <div className="text-6xl">💥</div>
+            <h2 className="text-2xl font-black tracking-wide uppercase text-white/80">Game Over</h2>
+            <div className="space-y-1">
+              <p className="text-xs uppercase tracking-widest text-white/50">Final Distance</p>
+              <div className="text-7xl font-black font-mono leading-none" style={{ fontFamily: 'Orbitron, ui-monospace, monospace' }}>
+                {hud.distance.toFixed(2)}
+              </div>
+              <p className="text-sm text-white/60 font-bold tracking-wider">KILOMETERS</p>
             </div>
-            <div className="flex gap-3 justify-center">
-              <button onClick={startGame} className="px-6 py-3 rounded-full bg-white text-black font-bold">
+            <p className="text-base text-white/90 font-medium italic">
+              Keep your streak, keep your speed! 🏁
+            </p>
+            <div className="flex flex-col gap-2 pt-2">
+              <button
+                onClick={startGame}
+                className="w-full px-6 py-3 rounded-xl bg-primary text-primary-foreground font-bold text-base shadow-lg hover:opacity-90 transition-opacity"
+              >
                 Play Again
               </button>
-              <button onClick={onExit} className="px-6 py-3 rounded-full bg-white/10 border border-white/20 text-white font-bold">
-                Exit
+              <button
+                onClick={onExit}
+                className="w-full px-6 py-3 rounded-xl bg-white/5 border border-white/15 text-white/80 font-medium hover:bg-white/10 transition-colors"
+              >
+                Exit to Garage
               </button>
             </div>
           </div>
@@ -824,26 +878,29 @@ function drawCarSprite(
   roundRect(ctx, cx + w * 0.3, cy + h * 0.15, w * 0.1, h * 0.06, 1); ctx.fill();
 }
 
-function drawTree(ctx: CanvasRenderingContext2D, x: number, y: number, scale: number, kind: 'pine' | 'leafy') {
+function drawTree(ctx: CanvasRenderingContext2D, x: number, y: number, scale: number, kind: 'pine' | 'leafy' | 'bush') {
   const h = Math.max(20, scale * 5000);
   const w = h * 0.5;
   // trunk
   ctx.fillStyle = '#5a3a1a';
-  ctx.fillRect(x - w * 0.08, y - h * 0.2, w * 0.16, h * 0.25);
+  if (kind !== 'bush') {
+    ctx.fillRect(x - w * 0.08, y - h * 0.2, w * 0.16, h * 0.25);
+  }
   if (kind === 'pine') {
-    ctx.fillStyle = '#1f6b2a';
+    ctx.fillStyle = '#1a5a24';
     ctx.beginPath();
     ctx.moveTo(x, y - h);
     ctx.lineTo(x + w * 0.5, y - h * 0.15);
     ctx.lineTo(x - w * 0.5, y - h * 0.15);
     ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#226b2c';
     ctx.beginPath();
     ctx.moveTo(x, y - h * 0.75);
     ctx.lineTo(x + w * 0.4, y - h * 0.1);
     ctx.lineTo(x - w * 0.4, y - h * 0.1);
     ctx.closePath(); ctx.fill();
-  } else {
-    ctx.fillStyle = '#2a8a3a';
+  } else if (kind === 'leafy') {
+    ctx.fillStyle = '#2f9540';
     ctx.beginPath();
     ctx.arc(x, y - h * 0.55, w * 0.55, 0, Math.PI * 2); ctx.fill();
     ctx.fillStyle = '#1f6b2a';
@@ -851,6 +908,16 @@ function drawTree(ctx: CanvasRenderingContext2D, x: number, y: number, scale: nu
     ctx.arc(x - w * 0.25, y - h * 0.4, w * 0.4, 0, Math.PI * 2); ctx.fill();
     ctx.beginPath();
     ctx.arc(x + w * 0.25, y - h * 0.45, w * 0.42, 0, Math.PI * 2); ctx.fill();
+  } else {
+    // bush — short, round, darker
+    ctx.fillStyle = '#246b2a';
+    ctx.beginPath();
+    ctx.arc(x - w * 0.2, y - h * 0.15, w * 0.32, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath();
+    ctx.arc(x + w * 0.2, y - h * 0.18, w * 0.34, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#1a5223';
+    ctx.beginPath();
+    ctx.arc(x, y - h * 0.28, w * 0.36, 0, Math.PI * 2); ctx.fill();
   }
 }
 
