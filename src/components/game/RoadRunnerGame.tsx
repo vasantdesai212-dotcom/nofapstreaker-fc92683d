@@ -552,11 +552,16 @@ const RoadRunnerGame = ({ onExit, streakDays = 0 }: RoadRunnerGameProps) => {
           if (seg.p1.screenScale <= 0) continue;
           // Deterministic per-segment props
           const r = ((seg.index * 9301 + 49297) % 233280) / 233280;
+          // Pick one of 3 tree variants with size jitter
+          const variant: TreeVariant = r < 0.18 ? 'pine' : r < 0.6 ? 'leafy' : 'bush';
+          const variant2: TreeVariant = r > 0.85 ? 'pine' : r > 0.55 ? 'leafy' : 'bush';
+          const jitter1 = 0.75 + ((seg.index * 73) % 100) / 200; // 0.75..1.25
+          const jitter2 = 0.75 + ((seg.index * 131) % 100) / 200;
           if (r < 0.35) {
-            drawTree(ctx, seg.p1.screenX - seg.p1.screenW - 30 - seg.p1.screenScale * 1500 * (r * 3), seg.p1.screenY, seg.p1.screenScale, r < 0.18 ? 'pine' : 'leafy');
+            drawTree(ctx, seg.p1.screenX - seg.p1.screenW - 30 - seg.p1.screenScale * 1500 * (r * 3), seg.p1.screenY, seg.p1.screenScale * jitter1, variant);
           }
           if (r > 0.6) {
-            drawTree(ctx, seg.p1.screenX + seg.p1.screenW + 30 + seg.p1.screenScale * 1500 * ((1 - r) * 3), seg.p1.screenY, seg.p1.screenScale, r > 0.85 ? 'pine' : 'leafy');
+            drawTree(ctx, seg.p1.screenX + seg.p1.screenW + 30 + seg.p1.screenScale * 1500 * ((1 - r) * 3), seg.p1.screenY, seg.p1.screenScale * jitter2, variant2);
           }
           // Occasional billboards / signs
           if (seg.index % 80 === 0) {
