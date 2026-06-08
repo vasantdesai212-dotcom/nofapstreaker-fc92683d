@@ -835,26 +835,29 @@ function drawCarSprite(
   roundRect(ctx, cx + w * 0.3, cy + h * 0.15, w * 0.1, h * 0.06, 1); ctx.fill();
 }
 
-function drawTree(ctx: CanvasRenderingContext2D, x: number, y: number, scale: number, kind: 'pine' | 'leafy') {
+function drawTree(ctx: CanvasRenderingContext2D, x: number, y: number, scale: number, kind: 'pine' | 'leafy' | 'bush') {
   const h = Math.max(20, scale * 5000);
   const w = h * 0.5;
   // trunk
   ctx.fillStyle = '#5a3a1a';
-  ctx.fillRect(x - w * 0.08, y - h * 0.2, w * 0.16, h * 0.25);
+  if (kind !== 'bush') {
+    ctx.fillRect(x - w * 0.08, y - h * 0.2, w * 0.16, h * 0.25);
+  }
   if (kind === 'pine') {
-    ctx.fillStyle = '#1f6b2a';
+    ctx.fillStyle = '#1a5a24';
     ctx.beginPath();
     ctx.moveTo(x, y - h);
     ctx.lineTo(x + w * 0.5, y - h * 0.15);
     ctx.lineTo(x - w * 0.5, y - h * 0.15);
     ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#226b2c';
     ctx.beginPath();
     ctx.moveTo(x, y - h * 0.75);
     ctx.lineTo(x + w * 0.4, y - h * 0.1);
     ctx.lineTo(x - w * 0.4, y - h * 0.1);
     ctx.closePath(); ctx.fill();
-  } else {
-    ctx.fillStyle = '#2a8a3a';
+  } else if (kind === 'leafy') {
+    ctx.fillStyle = '#2f9540';
     ctx.beginPath();
     ctx.arc(x, y - h * 0.55, w * 0.55, 0, Math.PI * 2); ctx.fill();
     ctx.fillStyle = '#1f6b2a';
@@ -862,6 +865,16 @@ function drawTree(ctx: CanvasRenderingContext2D, x: number, y: number, scale: nu
     ctx.arc(x - w * 0.25, y - h * 0.4, w * 0.4, 0, Math.PI * 2); ctx.fill();
     ctx.beginPath();
     ctx.arc(x + w * 0.25, y - h * 0.45, w * 0.42, 0, Math.PI * 2); ctx.fill();
+  } else {
+    // bush — short, round, darker
+    ctx.fillStyle = '#246b2a';
+    ctx.beginPath();
+    ctx.arc(x - w * 0.2, y - h * 0.15, w * 0.32, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath();
+    ctx.arc(x + w * 0.2, y - h * 0.18, w * 0.34, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#1a5223';
+    ctx.beginPath();
+    ctx.arc(x, y - h * 0.28, w * 0.36, 0, Math.PI * 2); ctx.fill();
   }
 }
 
