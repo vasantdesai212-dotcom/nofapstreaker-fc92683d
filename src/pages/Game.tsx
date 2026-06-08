@@ -33,7 +33,7 @@ const Game = () => {
         </div>
       }
     >
-      <RoadRunnerGame onExit={() => navigate('/garage')} />
+      <RoadRunnerGame onExit={() => navigate('/garage')} streakDays={streakDays} />
     </Suspense>
   );
 };
