@@ -71,9 +71,10 @@ const COLORS = {
 
 interface RoadRunnerGameProps {
   onExit: () => void;
+  streakDays?: number;
 }
 
-const RoadRunnerGame = ({ onExit }: RoadRunnerGameProps) => {
+const RoadRunnerGame = ({ onExit, streakDays = 0 }: RoadRunnerGameProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rafRef = useRef<number>();
   const lastTimeRef = useRef<number>(0);
