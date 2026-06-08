@@ -318,9 +318,12 @@ const RoadRunnerGame = ({ onExit, streakDays = 0 }: RoadRunnerGameProps) => {
     const drawSky = (width: number, height: number) => {
       const horizon = height * 0.55;
       const grad = ctx.createLinearGradient(0, 0, 0, horizon);
-      grad.addColorStop(0, '#0b1d3a');
-      grad.addColorStop(0.5, '#5a4480');
-      grad.addColorStop(1, '#ffb37a');
+      // Smooth navy → indigo → warm peach/amber
+      grad.addColorStop(0, '#06122b');
+      grad.addColorStop(0.25, '#1a2a55');
+      grad.addColorStop(0.55, '#6b4a7a');
+      grad.addColorStop(0.8, '#e89466');
+      grad.addColorStop(1, '#ffc28a');
       ctx.fillStyle = grad;
       ctx.fillRect(0, 0, width, horizon);
       // Sun
