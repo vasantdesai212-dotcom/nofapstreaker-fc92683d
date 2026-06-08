@@ -579,10 +579,25 @@ const RoadRunnerGame = ({ onExit, streakDays = 0 }: RoadRunnerGameProps) => {
         const carCy = height * 0.82;
         const carW = Math.min(width * 0.28, 260);
         const carH = carW * 0.62;
-        // Shadow
-        ctx.fillStyle = 'rgba(0,0,0,0.35)';
+        // Shadow — stretches forward when braking, compresses when slow/stopped
+        const sp = speedRef.current;
+        const dSpeed = sp - prevSpeedRef.current;
+        prevSpeedRef.current = sp;
+        // Target: 1 (neutral), >1 when decelerating, <1 when nearly stopped
+        const speedFactor = Math.max(0.4, Math.min(1, sp / (MAX_SPEED * 0.6)));
+        const brakeBoost = dSpeed < 0 ? Math.min(0.8, (-dSpeed / (ACCEL * 0.02))) : 0;
+        const targetStretch = speedFactor + brakeBoost;
+        shadowStretchRef.current += (targetStretch - shadowStretchRef.current) * Math.min(1, dt * 6);
+        const stretch = shadowStretchRef.current;
+        ctx.fillStyle = `rgba(0,0,0,${0.3 + (1 - speedFactor) * 0.15})`;
         ctx.beginPath();
-        ctx.ellipse(carCx, carCy + carH * 0.45, carW * 0.45, carH * 0.12, 0, 0, Math.PI * 2);
+        ctx.ellipse(
+          carCx,
+          carCy + carH * 0.45,
+          carW * 0.45 * stretch,
+          carH * 0.12 * (0.7 + (1 - speedFactor) * 0.6),
+          0, 0, Math.PI * 2,
+        );
         ctx.fill();
         // Speed lines
         if (speedRef.current > MAX_SPEED * 0.4) {
