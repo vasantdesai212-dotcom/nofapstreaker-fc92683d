@@ -553,8 +553,8 @@ const RoadRunnerGame = ({ onExit, streakDays = 0 }: RoadRunnerGameProps) => {
           // Deterministic per-segment props
           const r = ((seg.index * 9301 + 49297) % 233280) / 233280;
           // Pick one of 3 tree variants with size jitter
-          const variant: TreeVariant = r < 0.18 ? 'pine' : r < 0.6 ? 'leafy' : 'bush';
-          const variant2: TreeVariant = r > 0.85 ? 'pine' : r > 0.55 ? 'leafy' : 'bush';
+          const variant: 'pine' | 'leafy' | 'bush' = r < 0.18 ? 'pine' : r < 0.6 ? 'leafy' : 'bush';
+          const variant2: 'pine' | 'leafy' | 'bush' = r > 0.85 ? 'pine' : r > 0.55 ? 'leafy' : 'bush';
           const jitter1 = 0.75 + ((seg.index * 73) % 100) / 200; // 0.75..1.25
           const jitter2 = 0.75 + ((seg.index * 131) % 100) / 200;
           if (r < 0.35) {
